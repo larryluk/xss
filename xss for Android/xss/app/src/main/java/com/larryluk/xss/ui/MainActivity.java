@@ -1,10 +1,10 @@
-package com.larryluk.xss;
+package com.larryluk.xss.ui;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -12,14 +12,36 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.larryluk.xss.R;
+import com.larryluk.xss.bean.Chapter;
+import com.larryluk.xss.mvp.presenter.MainPresenter;
+import com.larryluk.xss.mvp.presenter.impl.MainPresenterImpl;
+import com.larryluk.xss.mvp.view.MainView;
+import com.larryluk.xss.util.Constants;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, MainView {
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.xs_content)
+    TextView xsContent;
+    @BindView(R.id.fab)
+    FloatingActionButton fab;
+    private ProgressDialog dialog;
+    private MainPresenter mainPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -40,6 +62,17 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        init();
+    }
+
+    private void init() {
+        dialog = new ProgressDialog(this);
+        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        dialog.setMessage(Constants.WAIL_MSG.toString());
+
+        mainPresenter = new MainPresenterImpl();
+        mainPresenter.attachView(this);
+        mainPresenter.loadChapter("http://www.biquzi.com/11_11850/7644114.html");
     }
 
     @Override
@@ -97,5 +130,26 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void showProgressDialog() {
+        dialog.show();
+    }
+
+    @Override
+    public void hideProgressDialog() {
+        dialog.dismiss();
+    }
+
+    @Override
+    public void showErrorMessage(String text) {
+        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onLoadPageSuccess(Chapter chapter) {
+        toolbar.setTitle(chapter.getTitle());
+        xsContent.setText(chapter.getContext());
     }
 }
