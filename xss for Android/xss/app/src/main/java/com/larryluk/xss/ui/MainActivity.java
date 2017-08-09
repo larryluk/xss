@@ -1,5 +1,7 @@
 package com.larryluk.xss.ui;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -13,7 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.larryluk.xss.R;
@@ -21,6 +23,7 @@ import com.larryluk.xss.bean.Chapter;
 import com.larryluk.xss.mvp.presenter.MainPresenter;
 import com.larryluk.xss.mvp.presenter.impl.MainPresenterImpl;
 import com.larryluk.xss.mvp.view.MainView;
+import com.larryluk.xss.ui.paper.RollPaper;
 import com.larryluk.xss.util.Constants;
 
 import butterknife.BindView;
@@ -30,10 +33,11 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, MainView {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.xs_content)
-    TextView xsContent;
     @BindView(R.id.fab)
     FloatingActionButton fab;
+    @BindView(R.id.main_body)
+    FrameLayout mainBody;
+
     private ProgressDialog dialog;
     private MainPresenter mainPresenter;
 
@@ -72,7 +76,13 @@ public class MainActivity extends AppCompatActivity
 
         mainPresenter = new MainPresenterImpl();
         mainPresenter.attachView(this);
-        mainPresenter.loadChapter("http://www.biquzi.com/11_11850/7644114.html");
+//        mainPresenter.loadChapter("http://www.biquzi.com/11_11850/7644114.html");
+
+        //fragment管理
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.main_body, new RollPaper());
+        fragmentTransaction.commit();
     }
 
     @Override
@@ -149,7 +159,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onLoadPageSuccess(Chapter chapter) {
-        toolbar.setTitle(chapter.getTitle());
-        xsContent.setText(chapter.getContext());
+//        toolbar.setTitle(chapter.getTitle());
+//        xsContent.setText(chapter.getContext());
     }
 }
