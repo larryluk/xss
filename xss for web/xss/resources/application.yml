@@ -1,0 +1,18 @@
+server:
+  port: 8081
+
+spring:
+  datasource:
+      name: xss
+      driver-class-name: com.mysql.jdbc.Driver
+      url: jdbc:mysql://127.0.0.1:3306/xss
+      username: root
+      password: 123456
+      type: com.alibaba.druid.pool.DruidDataSource
+
+
+mybatis:
+  mapper-locations: mapper/*.xml
+  type-aliases-package: com.larryluk.xss.dao
+  check-config-location: true
+  config: mybatis-config.xml
