@@ -1,4 +1,4 @@
-package com.larryluk.xss.controller;
+package com.larryluk.xss;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

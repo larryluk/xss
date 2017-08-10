@@ -7,12 +7,10 @@ spring:
       driver-class-name: com.mysql.jdbc.Driver
       url: jdbc:mysql://127.0.0.1:3306/xss
       username: root
-      password: 123456
+      password:
       type: com.alibaba.druid.pool.DruidDataSource
 
 
 mybatis:
-  mapper-locations: mapper/*.xml
+  mapper-locations: classpath*:mapper/*.xml
   type-aliases-package: com.larryluk.xss.dao
-  check-config-location: true
-  config: mybatis-config.xml
