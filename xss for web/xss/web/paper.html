@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="js/vue.min.js"></script>
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <link href="css/paper.css" rel="stylesheet"/>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="row">
+    <div class="col-md-6 col-md-offset-3 col-xs-6 col-xs-offset-3">
+        <h2 id="title" >{{title}}</h2>
+    </div>
+</div>
+
+
+
+</div>
+<div class="row">
+    <div id="xsContent" class="col-md-6 col-md-offset-3 col-xs-6 col-xs-offset-3">
+        <template v-for="c in xsContent">
+            {{c}}
+            <br />
+        </template>
+    </div>
+</div>
+<div class="row">
+    <div id="prev" class="col-md-2">
+        <button v-on:click="getPrevPage()">上一页</button>
+    </div>
+    <div id="next" class="col-md-2">
+        <button v-on:click="getNextPage()">下一页</button>
+    </div>
+</div>
+
+</body>
+<script>
+var content = new Vue({
+    el: '#xsContent',
+    data: {
+        xsContent: []
+    }
+
+});
+
+var prev = new Vue({
+    el: '#prev',
+    data: {
+        prevUrl: ''
+    },
+    methods: {
+        getPrevPage: function () {
+            loadPage(this.prevUrl);
+        }
+    }
+});
+
+var next = new Vue({
+    el: '#next',
+    data: {
+        nextUrl: ''
+    },
+    methods: {
+        getNextPage: function () {
+            loadPage(this.nextUrl);
+        }
+    }
+})
+
+var title = new Vue({
+    el: '#title',
+    data: {
+        title: ''
+    }
+});
+
+var loadPage = function (webpath) {
+    var requestUrl = 'http://localhost:8081/getXsChapter';
+    var url = "url=" + webpath;
+    $.ajax({url: requestUrl, data: url,
+        headers: {
+            'Accept': 'application/json;charset=UTF-8',
+            'Access-Control-Allow-Origin' : '*'
+        },
+        success: function (result) {
+            console.log(result.data.content);
+            content.$set(content.$data, "xsContent", result.data.content.split('\n'));
+            prev.$set(prev.$data, "prevUrl", result.data.prevUrl);
+            next.$set(next.$data, "nextUrl", result.data.nextUrl);
+            title.$set(title.$data, "title", result.data.title);
+            location.href = "#title";
+        }
+    });
+}
+
+loadPage('http://www.biquzi.com/11_11850/7644114.html');
+
+
+
+</script>
+</html>
