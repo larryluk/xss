@@ -1,58 +1,104 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:v-on="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <script src="https://unpkg.com/vue"></script>
+    <script src="js/vue.min.js"></script>
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <link href="css/paper.css" rel="stylesheet"/>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-<div id="app">
-    {{message}}
+<div class="row">
+    <div class="col-md-6 col-md-offset-3 col-xs-6 col-xs-offset-3">
+        <h2 id="title" >{{title}}</h2>
+    </div>
 </div>
 
-<div id="app1">
-    <span v-bind:title="msg">
-        鼠标悬停几秒钟查看此处动态绑定的提示信息
-    </span>
-</div>
 
-<div id="app2">
-    <p v-if="seen">你看到我了</p>
-</div>
 
-<div id="app3">
-    <p>{{m}}</p>
-    <input v-model="m">
+</div>
+<div class="row">
+    <div id="xsContent" class="col-md-6 col-md-offset-3 col-xs-6 col-xs-offset-3">
+        <template v-for="c in xsContent">
+            {{c}}
+            <br />
+        </template>
+    </div>
+</div>
+<div class="row">
+    <div id="prev" class="col-md-2">
+        <button v-on:click="getPrevPage()">上一页</button>
+    </div>
+    <div id="next" class="col-md-2">
+        <button v-on:click="getNextPage()">下一页</button>
+    </div>
 </div>
 
 </body>
 <script>
-    var app = new Vue({
-        el: '#app',
-        data: {
-            message: 'Hello Vue!'
+var content = new Vue({
+    el: '#xsContent',
+    data: {
+        xsContent: []
+    }
+
+});
+
+var prev = new Vue({
+    el: '#prev',
+    data: {
+        prevUrl: ''
+    },
+    methods: {
+        getPrevPage: function () {
+            loadPage(this.prevUrl);
+        }
+    }
+});
+
+var next = new Vue({
+    el: '#next',
+    data: {
+        nextUrl: ''
+    },
+    methods: {
+        getNextPage: function () {
+            loadPage(this.nextUrl);
+        }
+    }
+})
+
+var title = new Vue({
+    el: '#title',
+    data: {
+        title: ''
+    }
+});
+
+var loadPage = function (webpath) {
+    var requestUrl = 'http://localhost:8081/getXsChapter';
+    var url = "url=" + webpath;
+    $.ajax({url: requestUrl, data: url,
+        headers: {
+            'Accept': 'application/json;charset=UTF-8',
+            'Access-Control-Allow-Origin' : '*'
+        },
+        success: function (result) {
+            console.log(result.data.content);
+            content.$set(content.$data, "xsContent", result.data.content.split('\n'));
+            prev.$set(prev.$data, "prevUrl", result.data.prevUrl);
+            next.$set(next.$data, "nextUrl", result.data.nextUrl);
+            title.$set(title.$data, "title", result.data.title);
+            location.href = "#title";
         }
     });
+}
 
-    var app1 = new Vue({
-        el: '#app1',
-        data: {
-            msg:'页面加载于' + new Date()
-        }
-    });
+loadPage('http://www.biquzi.com/11_11850/7644114.html');
 
-    var app2 = new Vue({
-        el: '#app2',
-        data: {
-            seen: false
-        }
-    })
 
-    var app3 = new Vue({
-        el: '#app3',
-        data: {
-            m: 'mmp'
-        }
-    })
+
 </script>
 </html>

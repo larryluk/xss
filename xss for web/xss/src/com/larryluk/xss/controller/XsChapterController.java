@@ -4,8 +4,7 @@ import com.larryluk.xss.bean.Chapter;
 import com.larryluk.xss.bean.Result;
 import com.larryluk.xss.service.IChapterService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
@@ -18,8 +17,8 @@ public class XsChapterController {
     @Autowired
     private IChapterService chapterService;
 
-    @RequestMapping("/getXsChapter")
-    public Result<Chapter> getXsChapter(String url) throws IOException {
+    @RequestMapping(value = "/getXsChapter")
+    public Result<Chapter> getXsChapter(@RequestParam("url") String url) throws IOException {
         return chapterService.getXsChapter(url);
     }
 

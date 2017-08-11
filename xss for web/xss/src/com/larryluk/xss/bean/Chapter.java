@@ -6,7 +6,7 @@ package com.larryluk.xss.bean;
 public class Chapter {
 
     private int id;
-    private String context;
+    private String content;
     private String title;
     private int prev;    //指的是数据库中的位置
     private String prevUrl;
@@ -21,12 +21,12 @@ public class Chapter {
         this.id = id;
     }
 
-    public String getContext() {
-        return context;
+    public String getContent() {
+        return content;
     }
 
-    public void setContext(String context) {
-        this.context = context;
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public String getTitle() {

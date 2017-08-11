@@ -46,7 +46,7 @@ public class BiQuSpider implements Spider {
         next = base + next;
 
         Chapter chapter = new Chapter();
-        chapter.setContext(text);
+        chapter.setContent(text);
         chapter.setTitle(t);
         chapter.setNextUrl(next);
         chapter.setPrevUrl(prev);
