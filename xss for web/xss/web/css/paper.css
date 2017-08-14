@@ -3,9 +3,56 @@ h2 {
     margin: 0 auto;
 }
 
-body {
+#title {
+    margin-top: 6%;
 }
 
 ::-webkit-scrollbar{
     width: 0px;
+}
+
+.nav_float {
+    position: fixed;
+    top:0px;
+    left:0px;
+    width: 100%;
+    background: #2aabd2;
+}
+
+body{
+    margin:40px;
+
+    /*font-family:Tahoma,Helvetica,Arial,'宋体',sans-serif;*/
+}
+
+p {
+    font-size: 30px;
+}
+
+.btn-circle {
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    padding: 6px 0;
+    font-size: 12px;
+    line-height: 1.428571429;
+    border-radius: 15px;
+}
+
+.btn-circle.btn-lg {
+    width: 50px;
+    height: 50px;
+    padding: 10px 16px;
+    font-size: 18px;
+    line-height: 1.33;
+    border-radius: 25px;
+}
+
+.btn-circle.btn-xl {
+    width: 70px;
+    height: 70px;
+    padding: 10px 16px;
+    font-size: 24px;
+    line-height: 1.33;
+    border-radius: 35px;
 }

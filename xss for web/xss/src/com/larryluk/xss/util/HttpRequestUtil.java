@@ -17,6 +17,9 @@ import java.net.URLConnection;
 public class HttpRequestUtil {
 
     public static String getHtml(String webPath) throws IOException {
+        if(!"http://".equals(webPath.substring(0, 7)))
+            webPath = "http://" + webPath;
+
         BufferedReader in = null;
         URL url = new URL(webPath);
         URLConnection uc = url.openConnection();

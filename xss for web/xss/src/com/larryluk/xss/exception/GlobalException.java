@@ -1,6 +1,7 @@
 package com.larryluk.xss.exception;
 
 import com.larryluk.xss.bean.Result;
+import com.larryluk.xss.util.ResultEnum;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -15,6 +16,7 @@ public class GlobalException {
     @ExceptionHandler(Exception.class)
     public Result<Object> handler(Exception e){
         e.printStackTrace();
-        return null;
+
+        return new Result<>(ResultEnum.UNSUPPORT);
     }
 }

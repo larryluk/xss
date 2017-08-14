@@ -1,5 +1,7 @@
 package com.larryluk.xss.bean;
 
+import com.larryluk.xss.util.ResultEnum;
+
 /**
  * Created by larryluk on 2017/8/10.
  */
@@ -11,6 +13,16 @@ public class Result<T> {
     public Result(String code, T data) {
         this.code = code;
         this.data = data;
+    }
+
+    public Result(String code, String msg) {
+        this.code = code;
+        this.msg = msg;
+    }
+
+    public Result(ResultEnum e) {
+        this.code = e.getCode();
+        this.msg = e.getMsg();
     }
 
     public String getCode() {
