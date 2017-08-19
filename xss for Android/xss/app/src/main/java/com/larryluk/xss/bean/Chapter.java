@@ -1,23 +1,39 @@
 package com.larryluk.xss.bean;
 
+import com.larryluk.xss.util.StringUtil;
+
+import org.litepal.annotation.Column;
+import org.litepal.crud.DataSupport;
+
 /**
  * Created by larryluk on 2017/8/3.
  */
-public class Chapter extends LoadStatus{
-
-    private int id;
+public class Chapter extends DataSupport{
+    private int id; //数据库ID
     private String context;
     private String title;
     private int prev;    //指的是数据库中的位置
     private String prevUrl;
-    private int next;
+    private int next = 0;
     private String nextUrl;
+    private String nowUrl;
 
-    public Chapter(String msgCode, String msgContent) {
-        super(msgCode, msgContent);
+    @Column(ignore = true)
+    private Status status; //不存进数据库
+
+    public Chapter(Status stauts) {
+        this.status = stauts;
     }
 
+    public Chapter() {}
 
+    public String getNowUrl() {
+        return nowUrl;
+    }
+
+    public void setNowUrl(String nowUrl) {
+        this.nowUrl = nowUrl;
+    }
 
     public int getId() {
         return id;
@@ -75,6 +91,28 @@ public class Chapter extends LoadStatus{
         this.nextUrl = nextUrl;
     }
 
+    public String getIndexUrl() {
+        return nowUrl.substring(0, nowUrl.lastIndexOf('/'));
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public boolean isEmpty() {
+        if(StringUtil.isNullOrEmpty(this.getTitle()) ||
+                StringUtil.isNullOrEmpty(this.getContext()) ||
+                StringUtil.isNullOrEmpty(this.getNextUrl()) ||
+                StringUtil.isNullOrEmpty(this.getPrevUrl())) {
+            return true;
+        }
+
+        return false;
+    }
     @Override
     public String toString() {
         return new StringBuilder(title).append("\n")

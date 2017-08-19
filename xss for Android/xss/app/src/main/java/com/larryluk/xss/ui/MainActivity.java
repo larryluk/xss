@@ -1,62 +1,60 @@
 package com.larryluk.xss.ui;
 
+import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
+import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.larryluk.xss.R;
-import com.larryluk.xss.bean.Chapter;
+import com.larryluk.xss.application.XSSActivity;
+import com.larryluk.xss.bean.Index;
 import com.larryluk.xss.mvp.presenter.MainPresenter;
 import com.larryluk.xss.mvp.presenter.impl.MainPresenterImpl;
+import com.larryluk.xss.mvp.view.IFragmentManager;
+import com.larryluk.xss.mvp.view.MainActivityView;
 import com.larryluk.xss.mvp.view.MainView;
 import com.larryluk.xss.ui.paper.RollPaper;
 import com.larryluk.xss.util.Constants;
+import com.larryluk.xss.util.XSSCache;
+
+import java.util.Collections;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, MainView {
+public class MainActivity extends XSSActivity
+        implements NavigationView.OnNavigationItemSelectedListener, IFragmentManager, MainActivityView{
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.fab)
-    FloatingActionButton fab;
     @BindView(R.id.main_body)
     FrameLayout mainBody;
-
     private ProgressDialog dialog;
     private MainPresenter mainPresenter;
+
+    private MainView mainView;
+
+    private final static String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -70,18 +68,21 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void init() {
+//        mainPresenter.loadChapter("http://www.biquzi.com/11_11850/7644114.html");
+
         dialog = new ProgressDialog(this);
         dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         dialog.setMessage(Constants.WAIL_MSG.toString());
 
         mainPresenter = new MainPresenterImpl();
         mainPresenter.attachView(this);
-//        mainPresenter.loadChapter("http://www.biquzi.com/11_11850/7644114.html");
 
         //fragment管理
+        RollPaper rollPaper = new RollPaper();
+        mainView = rollPaper;
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.main_body, new RollPaper());
+        fragmentTransaction.replace(R.id.main_body, rollPaper);
         fragmentTransaction.commit();
     }
 
@@ -95,51 +96,84 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        if (id == R.id.nav_load) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            final EditText et = new EditText(this);
+            builder.setTitle("请输入小说网址");
+            builder.setView(et);
+            builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    String url = et.getText().toString();
+                    mainView.loadPage(url);
+                }
+            });
+            builder.setNegativeButton("取消", null);
+            builder.show();
 
+
+            // Handle the camera action
+        } else if (id == R.id.nav_index) {
+            Object o = XSSCache.get(Constants.NOW_PAGE_INDEX);
+            if(o instanceof String)
+                mainPresenter.getIndex(((String) o));
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
 
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onChange(@NonNull int FragmentID) {
+
+    }
+
+    @Override
+    public void onChangeTitle(String s) {
+        toolbar.setTitle(s);
+    }
+
+    private void showIndexDialog(List<Index> indices) {
+        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        builder.setIcon(R.mipmap.ic_launcher);
+        builder.setTitle("章节目录");
+
+        final String[] show = new String[indices.size()];
+        final String[] data = new String[indices.size()];
+
+        Collections.reverse(indices);
+        Index index = null;
+        for(int i = 0, j = indices.size(); i < j; i++) {
+            index = indices.get(i);
+            show[i] = index.getTitle();
+            data[i] = index.getUrl();
+        }
+
+        /**
+         * 设置内容区域为简单列表项
+         */
+
+        builder.setItems(show, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Log.i(TAG, data[i]);
+                mainView.loadPage(data[i]);
+            }
+        });
+        builder.setCancelable(true);
+        AlertDialog dialog=builder.create();
+        dialog.show();
     }
 
     @Override
@@ -158,8 +192,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onLoadPageSuccess(Chapter chapter) {
-//        toolbar.setTitle(chapter.getTitle());
-//        xsContent.setText(chapter.getContext());
+    public void getIndexSuc(List<Index> list) {
+        showIndexDialog(list);
     }
 }
