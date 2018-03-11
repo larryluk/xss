@@ -20,6 +20,7 @@ public class XsChapterController {
 
     @RequestMapping(value = "/getXsChapter")
     public Result<Chapter> getXsChapter(@RequestParam("url") String url) throws IOException {
+        System.out.println("getXsChapter");
         return chapterService.getXsChapter(url);
     }
 

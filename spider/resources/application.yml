@@ -1,5 +1,5 @@
 server:
-  port: 8082
+  port: 8083
 
 spring:
   datasource:
@@ -9,6 +9,8 @@ spring:
       username: root
       password:
       type: com.alibaba.druid.pool.DruidDataSource
+  application:
+    name: service-spider
 
 mybatis:
   mapper-locations: classpath*:mapper/*.xml
@@ -19,3 +21,8 @@ constant:
     search:
         url: http://www.biquge.com.tw/modules/article/soshu.php?searchkey=
     base: http://www.biquge.com.tw
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8090/eureka/
