@@ -1,6 +1,5 @@
 package com.larryluk.xss.service;
 
-import com.larryluk.xss.bean.Book;
 import com.larryluk.xss.bean.Chapter;
 import com.larryluk.xss.bean.Index;
 import com.larryluk.xss.bean.Result;

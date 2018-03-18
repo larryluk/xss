@@ -8,6 +8,7 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 
 /**
+ * HTTP工具类
  * Created by larryluk on 2017/8/3.
  */
 public class HttpRequestUtil {

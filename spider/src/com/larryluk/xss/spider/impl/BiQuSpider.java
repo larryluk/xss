@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 针对 http://www.biquge.com.tw 的爬虫实现
  * Created by larryluk on 2017/8/10.
  */
 @Repository("biquSpider")
